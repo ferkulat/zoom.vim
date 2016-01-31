@@ -29,12 +29,13 @@ function ZoomFont(amount)
       let l:replace_num_regex = ':h\([^:]*\)'
       let l:replacement_before_num = ':h'
     endif
-  endif
 
-  let l:fsize = substitute(&guifont, l:extract_num_regex , '\1', '')
-  let l:fsize += a:amount
-  let l:guifont = substitute(&guifont, l:replace_num_regex, l:replacement_before_num . l:fsize, '')
-  let &guifont = l:guifont
+
+    let l:fsize = substitute(&guifont, l:extract_num_regex , '\1', '')
+    let l:fsize += a:amount
+    let l:guifont = substitute(&guifont, l:replace_num_regex, l:replacement_before_num . l:fsize, '')
+    let &guifont = l:guifont
+  endif
 endfunction
 
 function! s:ZoomIn()
