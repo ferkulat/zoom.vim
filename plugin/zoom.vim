@@ -18,23 +18,33 @@ command! -narg=0 ZoomReset :call s:ZoomReset()
 nmap + :ZoomIn<CR>
 nmap - :ZoomOut<CR>
 
-" guifont size + 1
+function ZoomFont(amount)
+  if has("gui_running")
+    if has("gui_gtk2")
+      let l:extract_num_regex = '^[^0-9]*\([0-9][0-9]*$\)'
+      let l:replace_num_regex = '[0-9][0-9]*'
+      let l:replacement_before_num = ''
+    elseif has("gui_win32")
+      let l:extract_num_regex = '^.*:h\([^:]*\).*$' 
+      let l:replace_num_regex = ':h\([^:]*\)'
+      let l:replacement_before_num = ':h'
+    endif
+  endif
+
+  let l:fsize = substitute(&guifont, l:extract_num_regex , '\1', '')
+  let l:fsize += a:amount
+  let l:guifont = substitute(&guifont, l:replace_num_regex, l:replacement_before_num . l:fsize, '')
+  let &guifont = l:guifont
+endfunction
+
 function! s:ZoomIn()
-  let l:fsize = substitute(&guifont, '^.*:h\([^:]*\).*$', '\1', '')
-  let l:fsize += 1
-  let l:guifont = substitute(&guifont, ':h\([^:]*\)', ':h' . l:fsize, '')
-  let &guifont = l:guifont
+ call ZoomFont(1)
 endfunction
 
-" guifont size - 1
 function! s:ZoomOut()
-  let l:fsize = substitute(&guifont, '^.*:h\([^:]*\).*$', '\1', '')
-  let l:fsize -= 1
-  let l:guifont = substitute(&guifont, ':h\([^:]*\)', ':h' . l:fsize, '')
-  let &guifont = l:guifont
+ call ZoomFont(-1)
 endfunction
 
-" reset guifont size
 function! s:ZoomReset()
   let &guifont = s:current_font
 endfunction
